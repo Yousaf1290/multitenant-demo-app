@@ -21,8 +21,19 @@ default: &default
 
 
 development:
-  <<: *default
-  database: multitenant_demo_app_development
+  primary:
+    <<: *default
+    database: multitenant_demo_app_development
+  queue:
+    <<: *default
+    database: multitenant_demo_app_development_queue
+    migrations_paths: db/queue_migrate
+  # Template only: owns tenant migrations and the schema dump. Each company gets
+  # its own database with these settings, see TenantRecord.
+  tenant:
+    <<: *default
+    database: multitenant_demo_app_development_tenant
+    migrations_paths: db/tenant_migrate
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -55,8 +66,13 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: multitenant_demo_app_test
+  primary:
+    <<: *default
+    database: multitenant_demo_app_test
+  tenant:
+    <<: *default
+    database: multitenant_demo_app_test_tenant
+    migrations_paths: db/tenant_migrate
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -102,3 +118,7 @@ production:
     <<: *primary_production
     database: multitenant_demo_app_production_cable
     migrations_paths: db/cable_migrate
+  tenant:
+    <<: *primary_production
+    database: multitenant_demo_app_production_tenant
+    migrations_paths: db/tenant_migrate
