@@ -1,0 +1,9 @@
+alpha:
+  name: Alpha
+  slug: alpha
+  database_name: multitenant_demo_app_test_tenant_alpha
+
+beta:
+  name: Beta
+  slug: beta
+  database_name: multitenant_demo_app_test_tenant_beta
