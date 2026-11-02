@@ -147,6 +147,10 @@ end
 - Switching company inside a `with_company` block raises an error.
 - The API takes the company only from the signed token, never from a parameter or header.
 
+
+
+
+
 ### Authentication
 
 - Tokens are HS256 JWTs that last one hour and hold the user ID, company ID and expiry. The signing key is derived from `secret_key_base`, and the algorithm is fixed when decoding.
@@ -157,6 +161,12 @@ end
 ### Background job design
 
 Jobs run on **Solid Queue**, which is already part of Rails 8. It stores jobs in PostgreSQL, so the project needs no Redis, and it has recurring schedules and per-key locks built in. The queue has its own database, because it is shared infrastructure rather than company data.
+
+Schedules are in [`config/recurring.yml`](config/recurring.yml).
+
+**Tenant safety in jobs.** Jobs that touch company data include [`TenantJob`](app/jobs/concerns/tenant_job.rb), which takes `company_id` as the first argument and selects that database before the job runs. Jobs receive IDs, not model objects, because Rails would otherwise try to load the record before a company is selected.
+
+
 
 | Job | Runs | Where | What it does |
 |---|---|---|---|
@@ -235,3 +245,10 @@ bin/ci              # style, security scans, specs and seeds
 ```
 
 Specs use RSpec, and `webmock` blocks all real network calls. The suite covers the main behaviour of each area, not every edge case.
+
+
+**Domain**
+
+- Any user can use any shop in their company, because the brief defines no roles.
+- A shop can add its own product with the same SKU as a master product it already sells. The reverse is blocked.
+- Tokens cannot be revoked before they expire, and there are no refresh tokens.
