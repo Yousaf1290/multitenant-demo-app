@@ -33,14 +33,14 @@ module Api
       end
 
       private
-        attr_reader :current_user
+        attr_reader :current_user, :current_company
 
         def authenticate
           claims = AuthToken.decode(request.authorization.to_s.delete_prefix("Bearer "))
-          company = Company.active.find_by(id: claims["company_id"])
-          raise Unauthorized unless company
+          @current_company = Company.active.find_by(id: claims["company_id"])
+          raise Unauthorized unless current_company
 
-          TenantRecord.with_company(company) do
+          TenantRecord.with_company(current_company) do
             @current_user = User.find_by(id: claims["sub"])
             raise Unauthorized unless current_user
 

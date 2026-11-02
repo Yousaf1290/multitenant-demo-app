@@ -33,6 +33,10 @@ Rails.application.configure do
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
+  # Report orders to the mock third-party API, see config/routes.rb.
+  ENV["ORDER_LEDGER_URL"] ||= "http://localhost:3000/mock/order_reports"
+  ENV["ORDER_LEDGER_API_KEY"] ||= "development-key"
+
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 

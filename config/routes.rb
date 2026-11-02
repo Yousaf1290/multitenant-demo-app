@@ -17,4 +17,10 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  if Rails.env.development?
+    namespace :mock do
+      resources :order_reports, only: :create
+    end
+  end
 end

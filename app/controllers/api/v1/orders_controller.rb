@@ -17,10 +17,18 @@ module Api
         end
 
         order.save!
+        queue_report(order)
+
         render_order order, status: :created
       end
 
       private
+        def queue_report(order)
+          ReportOrderJob.perform_later(current_company.id, order.id)
+        rescue SolidQueue::Job::EnqueueError => error
+          logger.error "Order #{order.id} not queued for reporting: #{error.message}"
+        end
+
         def set_shop
           @shop = Shop.find(params[:shop_id])
         end
