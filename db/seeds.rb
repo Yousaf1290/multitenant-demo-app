@@ -17,6 +17,7 @@ companies = [
 
 companies.each do |details|
   company = Company.find_or_create_by!(slug: details[:slug]) { |new_company| new_company.name = details[:name] }
+  company.update!(catalog_csv_path: "data/catalogs/#{company.slug}.csv")
   TenantRecord.provision(company)
 
   TenantRecord.with_company(company) do

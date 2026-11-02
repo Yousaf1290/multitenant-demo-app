@@ -13,6 +13,9 @@ default: &default
   reconcile_order_reports:
     class: ReconcileOrderReportsJob
     schedule: every 10 minutes
+  schedule_catalog_syncs:
+    class: ScheduleCatalogSyncsJob
+    schedule: every 15 minutes
 
 development:
   <<: *default
