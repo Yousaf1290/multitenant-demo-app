@@ -1,7 +1,7 @@
 class Order < TenantRecord
   belongs_to :shop
   belongs_to :user
-  has_many :order_items
+  has_many :order_items, autosave: true
 
   enum :report_status, { pending: "pending", reported: "reported", rejected: "rejected" }, prefix: :report
 
