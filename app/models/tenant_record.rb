@@ -11,6 +11,9 @@ class TenantRecord < ActiveRecord::Base
 
   REGISTERED_SHARDS = Concurrent::Map.new
 
+  # Largest value a Postgres integer column holds; beyond it a save raises instead of failing validation.
+  MAX_INTEGER = 2_147_483_647
+
   class << self
     def with_company(company, &block)
       register(company)
