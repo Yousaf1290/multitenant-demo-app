@@ -203,6 +203,23 @@ The `Idempotency-Key` is the order's `reference`, and it stays the same on every
 }
 ```
 
+### Domain model
+
+```text
+ Host database                Company database
+
+ companies                    products ─────────────┐ (master catalog)
+                                                    │ optional link
+                              shops ── shop_products┘
+                                │           │
+                              orders ── order_items
+                                │
+ users ─────────────────────────┘ (users live in the company database)
+```
+**`shop_products` holds both kinds of shop product.** This is how "each shop may use master products or have its own" works:
+
+The database enforces the important rules as well as the models: unique SKUs, foreign keys, non-negative prices, positive quantities, and a check that a `shop_products` row is either properly linked or fully shop-specific. This matters because the CSV import writes with `upsert_all`, which skips model validations.
+
 ### Catalog sync
 
 Each company's feed is a CSV file, set in `companies.catalog_csv_path`. A local file simulates the external source.
